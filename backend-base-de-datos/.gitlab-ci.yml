@@ -1,0 +1,110 @@
+image: maven:3.8.3-openjdk-17
+# * imagen de base de datos
+services:
+  - mysql:latest
+
+variables:
+  EB_APP_JAR_NAME: "proyectoIntegrador-0.0.1-SNAPSHOT.jar"
+  ARTIFACT_PATH: "/builds/ctd/proyecto-integrador-0522/0621-c5/grupo-10/backend-base-de-datos/target/proyectoIntegrador-0.0.1-SNAPSHOT.jar"
+  # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
+  MYSQL_DATABASE: "mydb"
+  MYSQL_USER: "grupo10"
+  MYSQL_PASSWORD: "grupo10"
+  MYSQL_ROOT_PASSWORD: "grupo10"
+
+cache:
+  paths:
+    - .m2/repository
+
+stages:
+    - validate
+    #- test
+    - build
+    - deploy
+
+validate:
+    stage: validate
+    script:
+        - 'mvn --file "backend-base-de-datos/pom.xml" test-compile'
+    only:
+        - develop
+
+
+#test:
+#    stage: test
+#    script:
+#        #- 'mvn --file "backend-base-de-datos/pom.xml" verify -Dspring.profile.active=test site site:jar'
+#        #- mvn --file "backend-base-de-datos/pom.xml" verify -Dspring.profile.active=test-mysql site site:jar
+#        - mvn --file "backend-base-de-datos/pom.xml" verify -Ptest -DprofileIdEnabled=true site site:jar
+#    only:
+#        - develop
+
+build-test:
+    stage: build
+    image: maven:3.8.3-openjdk-17
+    artifacts:
+        when: always
+        name: $EB_APP_JAR_NAME
+        expire_in: 30 min
+        paths:
+            - $ARTIFACT_PATH
+    script:
+        - echo "Building app..."
+        - mvn --file "backend-base-de-datos/pom.xml" clean install package -B -DskipTests -Pprodtest -DprofileIdEnabled=true
+        - echo "Finished building the app."
+    only:
+        - develop        
+
+deploy-test:
+    stage: deploy
+    image: alpine:3.11
+    before_script:
+        - apk update && apk add openssh-client bash
+        - mkdir -p ~/.ssh
+        - eval $(ssh-agent -s)
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+        - touch ~/.ssh/config
+        - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+        - ssh-keyscan $DEPLOY_SERVER_IP >> ~/.ssh/known_hosts
+        - chmod 644 ~/.ssh/known_hosts
+
+    script:
+        - echo "Deploying started..."
+        - ssh ec2-user@$DEPLOY_SERVER_IP "sudo systemctl stop backendApi"
+        - scp $ARTIFACT_PATH ec2-user@$DEPLOY_SERVER_IP:/home/ec2-user/applications/
+        - ssh ec2-user@$DEPLOY_SERVER_IP "sudo systemctl start backendApi"
+        - echo "Finished deploying the app"
+    only:
+        - develop
+
+build-prod:
+    stage: build
+    image: maven:3.8.3-openjdk-17
+    artifacts:
+        when: always
+        name: $EB_APP_JAR_NAME
+        expire_in: 30 min
+        paths:
+            - $ARTIFACT_PATH
+    script:
+        - echo "Building app..."
+        - mvn --file "backend-base-de-datos/pom.xml" clean install package -B -DskipTests -Pprod -DprofileIdEnabled=true
+        - echo "Finished building the app."
+    only:
+        - main  
+    when: manual 
+
+
+
+deploy-prod:
+  stage: deploy
+  image:
+    name: banst/awscli
+    entrypoint: [""]
+  script:
+    - aws configure set region us-west-2
+    - aws s3 cp $ARTIFACT_PATH s3://$BUCKET_S3 --recursive --acl public-read
+    #- aws s3 cp /home/gitlab-runner/builds/wydXNp9p/0/devopshint/demo1/build/libs/AWS-0.0.1-SNAPSHOT.jar s3://$S3_BUCKET
+  only:
+    - main
+  when: manual

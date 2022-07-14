@@ -1,0 +1,142 @@
+{
+	"id": "858bf79f-889d-413d-8c05-6f1c92f5f952",
+	"name": "ProyectoIntegrador",
+	"timestamp": "2022-05-23T03:31:02.164Z",
+	"collection_id": "4065649-5aec600b-af11-496a-aac7-0acf0e1574f7",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 4,
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "cf01c5bc-73ec-4f4b-b52e-5d9caa53f977",
+			"name": "Listar",
+			"url": "http://ec2-54-196-121-198.compute-1.amazonaws.com:8080/categorias",
+			"time": 177,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				177
+			],
+			"allTests": [
+				{
+					"Status code is 200": true
+				}
+			]
+		},
+		{
+			"id": "db9b52e9-fe5d-4cbe-9fbd-c607f6ea9638",
+			"name": "Crear",
+			"url": "http://ec2-54-196-121-198.compute-1.amazonaws.com:8080/categorias",
+			"time": 191,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				191
+			],
+			"allTests": [
+				{
+					"Status code is 200": true
+				}
+			]
+		},
+		{
+			"id": "eb63c3ef-ff55-48f4-a95d-e8216084e15d",
+			"name": "Modificar",
+			"url": "http://ec2-54-196-121-198.compute-1.amazonaws.com:8080/categorias",
+			"time": 187,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				187
+			],
+			"allTests": [
+				{
+					"Status code is 200": true
+				}
+			]
+		},
+		{
+			"id": "98687677-955d-4c07-b5ce-1e5f1224bc05",
+			"name": "Borrar",
+			"url": "http://ec2-54-196-121-198.compute-1.amazonaws.com:8080/categorias/11",
+			"time": 188,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				188
+			],
+			"allTests": [
+				{
+					"Status code is 200": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 743,
+	"collection": {
+		"requests": [
+			{
+				"id": "cf01c5bc-73ec-4f4b-b52e-5d9caa53f977",
+				"method": "GET"
+			},
+			{
+				"id": "db9b52e9-fe5d-4cbe-9fbd-c607f6ea9638",
+				"method": "POST"
+			},
+			{
+				"id": "eb63c3ef-ff55-48f4-a95d-e8216084e15d",
+				"method": "PUT"
+			},
+			{
+				"id": "98687677-955d-4c07-b5ce-1e5f1224bc05",
+				"method": "DELETE"
+			}
+		]
+	}
+}
